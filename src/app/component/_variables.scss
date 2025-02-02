@@ -1,0 +1,34 @@
+$screen-padding: 30px;
+$radius: 30px;
+
+$accent-color: #1CA1F7;
+$alert-color: #EC3481;
+$text-color: #263656;
+$bg-color: #F1F3F6;
+$border-color: #E0E6E9;
+$highlight-color: #F6F9Fc;
+$shadow-color: rgba(32, 64, 128, 0.20);
+$shadow: -1.5px -1.5px 2px rgba(255,255,255,0.95), 1px 1px 3px $shadow-color;
+$shadow-wide: -5px -5px 8px rgba(255,255,255,1), 5px 5px 10px $shadow-color;
+$shadow-inset: -1.5px -1.5px 3px rgba(255,255,255,0.95) inset, 1px 1px 4px $shadow-color inset;
+$shadow-text: 1px 1px 1px rgba(255,255,255,0.95);
+
+$font:       "HelveticaNeue-Light", arial, sans-serif;
+
+@keyframes fadeon {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleon {
+    0% {
+        transform: scale(0.85);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

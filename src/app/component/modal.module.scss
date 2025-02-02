@@ -1,0 +1,58 @@
+@import './variables';
+
+.modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  animation: fadeon 0.3s ease 0s;
+  > * {
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+    animation: scaleon 0.25s ease-out 0s;
+  }
+}
+
+.panel {
+  position: relative;
+  width: 100%;
+  background-color: $bg-color;
+  border-radius: $radius;
+  overflow: hidden;
+  > header{
+     padding: 0 $screen-padding;
+    }
+  > div{
+    margin: 0 $screen-padding/2;
+    padding: $screen-padding;
+    border-radius: $radius/2;
+    box-shadow: $shadow-inset;
+    background-color: darken($bg-color, 3);
+  }
+  > footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $screen-padding/2;
+    padding: $screen-padding/2;
+    button{
+      font-weight: 700;
+      padding: $screen-padding/2 $screen-padding/2;
+      &[type="button"]{
+        color: $alert-color;
+        background-color: $bg-color;
+        &:hover:after{
+          content: '';
+          border: 2px solid $alert-color;
+        }
+      }
+    }
+}
+}
