@@ -15,6 +15,7 @@ export const getChartDataAsync: (() => Promise<GoogleChartData>) = async functio
 
 const getChartData = (): Promise<GoogleChartData> => {
   return getMapData().then(data => {
+    console.log("data", JSON.stringify(data));
     return convertMapDataToChartData(data);
   });
 }
