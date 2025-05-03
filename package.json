@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && tsc server.ts",
+    "start": "node server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "@types/react-dom": "18.2.7",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",
+    "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "next": "13.4.13",
     "react": "18.2.0",
@@ -23,6 +24,7 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
     "autoprefixer": "^10.4.15",
     "postcss": "^8.4.28",
     "react-google-charts": "^4.0.1",
