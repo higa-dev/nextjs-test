@@ -24,7 +24,7 @@ app.prepare().then(() => {
   });
 
   // === Next.js ハンドラにすべてのリクエストを委譲 ===
-  server.all("*", (req: Request, res: Response) => {
+  server.all("/*", (req: Request, res: Response) => {
     return handle(req, res);
   });
 
