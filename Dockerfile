@@ -16,6 +16,8 @@ COPY server.ts .
 
 RUN npm run build
 
+RUN ls -l dist-server/
+
 EXPOSE 3000
 
 CMD ["npm", "start"]
