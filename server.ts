@@ -17,7 +17,7 @@ app.prepare().then(() => {
   // === CORS ミドルウェア ===
   server.use((req: Request, res: Response, next: NextFunction): void => {
     console.log(`Incoming request: ${req.method} ${req.url}`);
-    res.setHeader("Access-Control-Allow-Origin", "https://your-project.web.app");
+    res.setHeader("Access-Control-Allow-Origin", "https://higapro-180014.web.app");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
