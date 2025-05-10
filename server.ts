@@ -17,7 +17,7 @@ app.prepare().then(() => {
 
   // CORS設定
   server.use(cors({
-    origin: "https://higapro-180014.web.app/", // Firebase Hosting ドメイン
+    origin: "https://higapro-180014.web.app", // Firebase Hosting ドメイン
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -25,6 +25,10 @@ app.prepare().then(() => {
 
   // IDトークンを検証するミドルウェア
   server.use(async(req: Request, res: Response, next: NextFunction): Promise<any> => {
+    if (req.method === "OPTIONS") {
+      return next(); // プリフライトはスキップ
+    }
+    
     const authHeader = req.headers.authorization || "";
     const match = authHeader.match(/^Bearer (.+)$/);
     const idToken = match?.[1];
