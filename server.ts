@@ -12,6 +12,18 @@ const oAuthClient = new OAuth2Client(CLIENT_ID);
 
 const allowedMailAddresses = ["higa1140@gmail.com"]
 
+const skipAuthPaths = [
+  "/_next",                 // JS, CSS, 静的ファイルなど
+  "/favicon.ico",           // アイコン
+  "/robots.txt",            // その他公開ファイル
+  "/sitemap.xml",
+  "/manifest.json",
+  "/service-worker.js",
+  "/_next/data",            // データフェッチ
+  "/api/auth",              // ISR用APIや認証関係（あれば）
+  "/static",                // 静的ファイル
+];
+
 app.prepare().then(() => {
   const server = express();
 
@@ -23,10 +35,10 @@ app.prepare().then(() => {
     credentials: true,
   }));
 
+
   // IDトークンを検証するミドルウェア
   server.use(async(req: Request, res: Response, next: NextFunction): Promise<any> => {
   // 静的ファイルには認証スキップ
-  const skipAuthPaths = ["/_next", "/static", "/favicon.ico", "/images"];
   if (skipAuthPaths.some(path => req.path.startsWith(path))) {
     return next();
   }
