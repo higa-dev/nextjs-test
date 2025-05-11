@@ -25,13 +25,12 @@ app.prepare().then(() => {
 
   // IDトークンを検証するミドルウェア
   server.use(async(req: Request, res: Response, next: NextFunction): Promise<any> => {
-    if (req.method === "OPTIONS") {
-      return next(); // プリフライトはスキップ
-    }
+    const idToken = req.query.auth as string;
+
     
-    const authHeader = req.headers.authorization || "";
-    const match = authHeader.match(/^Bearer (.+)$/);
-    const idToken = match?.[1];
+//    const authHeader = req.headers.authorization || "";
+//    const match = authHeader.match(/^Bearer (.+)$/);
+//    const idToken = match?.[1];
 
     if (!idToken) {
       return res.status(401).send("Missing ID token");
