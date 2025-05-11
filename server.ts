@@ -25,6 +25,12 @@ app.prepare().then(() => {
 
   // IDトークンを検証するミドルウェア
   server.use(async(req: Request, res: Response, next: NextFunction): Promise<any> => {
+  // 静的ファイルには認証スキップ
+  const skipAuthPaths = ["/_next", "/static", "/favicon.ico", "/images"];
+  if (skipAuthPaths.some(path => req.path.startsWith(path))) {
+    return next();
+  }
+
     const idToken = req.query.auth as string;
 
     
