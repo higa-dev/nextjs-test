@@ -2,6 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import { OAuth2Client } from "google-auth-library";
 import cors from "cors";
 import next from "next";
+import cookieParser from "cookie-parser";
+
+
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -26,6 +29,7 @@ const allowedMailAddresses = ["higa1140@gmail.com"]
 
 app.prepare().then(() => {
   const server = express();
+  server.use(cookieParser());
 
   // CORS設定
   server.use(cors({
