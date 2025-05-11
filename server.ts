@@ -12,17 +12,17 @@ const oAuthClient = new OAuth2Client(CLIENT_ID);
 
 const allowedMailAddresses = ["higa1140@gmail.com"]
 
-const skipAuthPaths = [
-  "/_next",                 // JS, CSS, 静的ファイルなど
-  "/favicon.ico",           // アイコン
-  "/robots.txt",            // その他公開ファイル
-  "/sitemap.xml",
-  "/manifest.json",
-  "/service-worker.js",
-  "/_next/data",            // データフェッチ
-  "/api/auth",              // ISR用APIや認証関係（あれば）
-  "/static",                // 静的ファイル
-];
+// const skipAuthPaths = [
+//   "/_next",                 // JS, CSS, 静的ファイルなど
+//   "/favicon.ico",           // アイコン
+//   "/robots.txt",            // その他公開ファイル
+//   "/sitemap.xml",
+//   "/manifest.json",
+//   "/service-worker.js",
+//   "/_next/data",            // データフェッチ
+//   "/api/auth",              // ISR用APIや認証関係（あれば）
+//   "/static",                // 静的ファイル
+// ];
 
 app.prepare().then(() => {
   const server = express();
@@ -35,44 +35,46 @@ app.prepare().then(() => {
     credentials: true,
   }));
 
-
-  // IDトークンを検証するミドルウェア
-  server.use(async(req: Request, res: Response, next: NextFunction): Promise<any> => {
-  // 静的ファイルには認証スキップ
-  if (skipAuthPaths.some(path => req.path.startsWith(path))) {
-    return next();
-  }
-
-    const idToken = req.query.auth as string;
-
-    
-//    const authHeader = req.headers.authorization || "";
-//    const match = authHeader.match(/^Bearer (.+)$/);
-//    const idToken = match?.[1];
-
-    if (!idToken) {
-      return res.status(401).send("Missing ID token");
-    }
-
-    try {
+    // トークン検証の共通関数
+    async function verifyAndAuthorizeToken(idToken: string | undefined): Promise<any> {
+      if (!idToken) throw new Error("Token missing");
+  
       const ticket = await oAuthClient.verifyIdToken({
         idToken,
         audience: CLIENT_ID,
       });
-
+  
       const payload = ticket.getPayload();
-
-      console.log(JSON.stringify(payload));
-      if (!payload || !payload.email) {
-        return res.status(403).send("Invalid token");
+      if (!payload || !payload.email || !allowedMailAddresses.includes(payload.email)) {
+        throw new Error("Unauthorized");
       }
+  
+      return payload;
+    }
+  
 
-      if( !allowedMailAddresses.includes(payload.email)  ){
-        return res.status(403).send("Invalid address");
+  // IDトークンを検証するミドルウェア
+  server.use(async(req: Request, res: Response, next: NextFunction): Promise<any> => {
+  // 静的ファイルには認証スキップ
+  // if (skipAuthPaths.some(path => req.path.startsWith(path))) {
+  //   return next();
+  // }
+    try {
+      const idToken = req.query.auth ||  req.cookies?.auth;
+      if(!idToken) {
+        return res.status(401).send("Token not provided");
       }
-
-
-      next();
+      
+      const payload = await verifyAndAuthorizeToken(idToken);
+      res.cookie("id_token", idToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000, // 1時間
+      });
+    
+      (req as any).user = payload;
+      return next();
     } catch (err) {
       console.error("Token verification failed:", err);
       return res.status(403).send("Unauthorized");
