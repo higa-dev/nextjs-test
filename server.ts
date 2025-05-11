@@ -60,21 +60,37 @@ app.prepare().then(() => {
   //   return next();
   // }
     try {
-      const idToken = req.query.auth ||  req.cookies?.auth;
-      if(!idToken) {
-        return res.status(401).send("Token not provided");
+      let idToken: string | undefined;
+
+      // クエリパラメータにトークンがある場合（初回）
+      if (req.query.id_token) {
+        idToken = req.query.id_token as string;
+
+        const payload = await verifyAndAuthorizeToken(idToken);
+        res.cookie("id_token", idToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 1000, // 1時間
+        });
+
+        (req as any).user = payload;
+        return next();
       }
-      
-      const payload = await verifyAndAuthorizeToken(idToken);
-      res.cookie("auth", idToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        maxAge: 60 * 60 * 1000, // 1時間
-      });
-    
-      (req as any).user = payload;
-      return next();
+
+
+      // Cookie に保存されたトークンを使用（2回目以降）
+      if (req.cookies?.id_token) {
+        idToken = req.cookies.id_token;
+
+        const payload = await verifyAndAuthorizeToken(idToken);
+        (req as any).user = payload;
+        return next();
+      }
+
+      return res.status(401).send("Token not provided");
+
+
     } catch (err) {
       console.error("Token verification failed:", err);
       return res.status(403).send("Unauthorized");
