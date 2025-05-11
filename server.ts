@@ -66,7 +66,7 @@ app.prepare().then(() => {
       }
       
       const payload = await verifyAndAuthorizeToken(idToken);
-      res.cookie("id_token", idToken, {
+      res.cookie("auth", idToken, {
         httpOnly: true,
         secure: true,
         sameSite: "lax",
