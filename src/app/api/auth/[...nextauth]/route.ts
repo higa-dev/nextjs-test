@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }: { user: User }) {
-      const allowedEmails = ["your-address@gmail.com"];
+      const allowedEmails = ["higa1140@gmail.com"];
       return allowedEmails.includes(user.email!);
     },
   },
