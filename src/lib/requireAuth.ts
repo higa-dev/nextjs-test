@@ -1,9 +1,9 @@
-
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import auth from "next-auth";
 import { redirect } from "next/navigation";
-import { auth } from "./auth";
 
 export async function requireAuth() {
-  const session = await auth();
+  const session = await auth(authOptions);
   if (!session) redirect("/api/auth/signin");
   return session;
 }

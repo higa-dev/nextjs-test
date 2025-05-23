@@ -1,8 +1,9 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthConfig } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import type { NextAuthOptions, User } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
+const allowedEmails = ["higa1140@gmail.com"]; // 許可したいメールアドレス
+
+export const authOptions: NextAuthConfig = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -10,8 +11,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user }: { user: User }) {
-      const allowedEmails = ["higa1140@gmail.com"];
+    async signIn({ user }) {
       return allowedEmails.includes(user.email!);
     },
   },
