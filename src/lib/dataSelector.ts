@@ -11,6 +11,5 @@ export const putDataFunc = () => {
 }
 
 const isProd = () =>{
-  console.log("NEXT_PUBLIC_ENV", process.env.NEXT_PUBLIC_ENV)
   return process.env.NEXT_PUBLIC_ENV=== "prod";
 }

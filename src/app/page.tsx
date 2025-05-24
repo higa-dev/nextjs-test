@@ -3,10 +3,6 @@ import { Weather } from './component/weather'
 import Link from 'next/link'
 
 export default function Home() {
-console.log("process.env", JSON.stringify(process.env));
-  console.log("process.env.GOOGLE_CREDENTIALS",process.env.GOOGLE_CREDENTIALS);
-
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
     <h1 className="text-3xl font-bold underline">
