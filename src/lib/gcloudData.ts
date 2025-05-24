@@ -2,7 +2,13 @@
 
 import { Datastore } from '@google-cloud/datastore'
 import { MapData } from './data';
-const datastore = new Datastore();
+
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS!);
+
+const datastore = new Datastore({
+  projectId: process.env.GOOGLE_PROJECT_ID,
+  credentials,
+});
 const kind = 'nextjs-test';
 const name = 'travel';
 const taskKey = datastore.key([kind, name]);
