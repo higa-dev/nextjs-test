@@ -3,6 +3,7 @@
 import { Datastore } from '@google-cloud/datastore'
 import { MapData } from './data';
 
+console.log("process.env.GOOGLE_CREDENTIALS",process.env.GOOGLE_CREDENTIALS);
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS!);
 
 const datastore = new Datastore({
