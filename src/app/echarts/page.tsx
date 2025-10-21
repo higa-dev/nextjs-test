@@ -21,9 +21,7 @@ const Page: FC = () => {
 
         if (!echarts.getMap('JP')) {
           console.log("aaaaa")
-          echarts.registerMap('JP', geoJson, {
-            name: 'nam'  // Use the correct property from GeoJSON
-          });
+          echarts.registerMap('JP', geoJson);
           // echarts.registerMap('JP', geoJson );
         }
 
