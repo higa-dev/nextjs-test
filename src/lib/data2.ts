@@ -9,24 +9,23 @@ export const getChartDataAsync: (() => Promise<EChartsData>) = async function ()
 
 const getChartData = (): Promise<EChartsData> => {
   return getMapData().then(data => {
-    console.log("data", JSON.stringify(data));
     return convertMapDataToChartData(data);
   });
 }
 
 const getMapData = (): Promise<MapData> => {
-  return getDataFunc()(); 
+  return getDataFunc()();
 }
 
 const convertMapDataToChartData = function (data: MapData): EChartsData {
   //const ret: EChartsData = [prefecturesHeader];
-const ret: EChartsData = [];
+  const ret: EChartsData = [];
 
   for (const prefecture in data) {
     ret.push({ name: prefecture, value: data[prefecture]['grade'], memo: data[prefecture]['memo'] });
-//    ret.push([prefecture, data[prefecture]['grade']]);
+    //    ret.push([prefecture, data[prefecture]['grade']]);
   }
-console.log("ret", JSON.stringify(ret));
+  console.log("ret", JSON.stringify(ret));
   return ret;
 }
 
@@ -48,4 +47,4 @@ interface MapDataPrefecture {
   'pickup': number;
 }
 
-export type EChartsData = {name: string, value: number, memo:string}[];
+export type EChartsData = { name: string, value: number, memo: string }[];

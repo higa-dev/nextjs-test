@@ -1,10 +1,9 @@
 "use client";
+import { EChartsData, getChartDataAsync } from '@/lib/data2';
+import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { FC, useEffect, useState } from 'react';
-import * as echarts from 'echarts';
-import { prefectureData } from '@/lib/prefectureData';
 import { ModalUpdateGradePanel } from '../travel/ModalUpdateGradePanel';
-import { getChartDataAsync, EChartsData } from '@/lib/data2';
 
 const Body: FC = () => {
   const [isMapReady, setIsMapReady] = useState(false);
@@ -13,27 +12,8 @@ const Body: FC = () => {
   const [chartData, setChartData] = useState<EChartsData>([]);
 
   useEffect(() => {
-    const initMap = async () => {
-      try {
-        const response = await fetch('/japan.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch GeoJSON');
-        }
-        const geoJson = await response.json();
-
-        if (!echarts.getMap('JP')) {
-          console.log("aaaaa")
-          echarts.registerMap('JP', geoJson);
-          // echarts.registerMap('JP', geoJson );
-        }
-
-        setIsMapReady(true);
-      } catch (error) {
-        console.error('Error initializing map:', error);
-      }
-    };
-
     initMap();
+    getData();
   }, []);
 
   const getData = () => {
@@ -42,13 +22,25 @@ const Body: FC = () => {
     })
   }
 
-  useEffect(() => {
-    getData();
-  }, [])
+  const initMap = async () => {
+    try {
+      const response = await fetch('/japan.json');
+      if (!response.ok) {
+        throw new Error('Failed to fetch GeoJSON');
+      }
+      const geoJson = await response.json();
 
-  if (!isMapReady) {
-    return <div>Loading Map...</div>;
-  }
+      if (!echarts.getMap('JP')) {
+        echarts.registerMap('JP', geoJson);
+      }
+
+      setIsMapReady(true);
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  };
+
+
 
   // クリックイベントハンドラを登録するための onEvents
   const onEvents: { [key: string]: (params: any) => void } = {
@@ -77,10 +69,10 @@ const Body: FC = () => {
       trigger: 'item',
       formatter: (params: any) => {
         const { name, value, memo } = params.data;
-        return `${name}<br/>Value: ${value}${memo ? `<br/>Memo: ${memo}` : ''}`;
-     }
+        return `${name}<br/>評価: ${value}${memo ? `<br/>Memo: ${memo}` : ''}`;
+      }
 
-//      formatter: '{b}<br/>Value: {c} {d}',
+      //      formatter: '{b}<br/>Value: {c} {d}',
     },
     visualMap: {
       min: 0,
@@ -100,7 +92,7 @@ const Body: FC = () => {
         label: {
           show: false,
         },
-        data: chartData, // Use the directly matched data
+        data: chartData,
         emphasis: {
           label: {
             show: true,
@@ -111,14 +103,15 @@ const Body: FC = () => {
   };
 
   return (
-
-<div style={{ width: '100%', height: '800px', minHeight: 320 }}>
-      <ReactECharts option={options}  onEvents={onEvents} style={{ width: '100%', height: '100%' }} />
-      {isModalOpen && (
-        <ModalUpdateGradePanel prefecture={prefecture} updateCallback={updateCallback} cancelCallback={cancelCallback}></ModalUpdateGradePanel>
-      )}
-    </div>
-  );
+    !isMapReady ? (<div>Loading Map...</div>) : (
+      <div style={{ width: '100%', height: '800px', minHeight: 320 }}>
+        <ReactECharts option={options} onEvents={onEvents} style={{ width: '100%', height: '100%' }} />
+        {isModalOpen && (
+          <ModalUpdateGradePanel prefecture={prefecture} updateCallback={updateCallback} cancelCallback={cancelCallback}></ModalUpdateGradePanel>
+        )}
+      </div>
+    )
+  )
 };
 
 export default Body;
