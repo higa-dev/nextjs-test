@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
 import React from "react";
-import { updateChartData } from "../../lib/data";
+import useUpdateChartData from "../../hooks/useUpdateChartData";
 import Modal from "../component/modal";
 import commonStyles from "../component/modal.module.scss";
 import styles from './ModalUpdateGradePanel.module.scss';
@@ -16,8 +16,10 @@ type Props = {
 
 export const ModalUpdateGradePanel: React.FC<Props> = (props) => {
 
-  const update = (grade: number) => {
-    updateChartData(props.prefecture, grade);
+  const updateChartData = useUpdateChartData;
+
+  const update = async (grade: number) => {
+    await updateChartData(props.prefecture, grade);
     props.updateCallback();
   }
 

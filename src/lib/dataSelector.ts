@@ -1,15 +1,27 @@
-
-import { getDataFromGcloud, putDataFromGcloud } from "./gcloudData"
+import { MapData } from "@/type/map";
+import { getDataFromGcloud, putDataFromGcloud } from "./gcloudData";
 import { getMockData, putMockData } from "./mockData";
 
-export const getDataFunc = () => {
-  return isProd() ? getDataFromGcloud : getMockData;
-}
+// Define a type for the data handler
+export type DataHandler = {
+  getData: () => Promise<MapData>;
+  putData: (data: any) => void;
+};
 
-export const putDataFunc = () => {
-  return isProd() ?  putDataFromGcloud : putMockData;
-}
+// Handlers for different environments
+const handlers: Record<string, DataHandler> = {
+  prod: {
+    getData: getDataFromGcloud,
+    putData: putDataFromGcloud,
+  },
+  default: {
+    getData: getMockData,
+    putData: putMockData,
+  },
+};
 
-const isProd = () =>{
-  return process.env.NEXT_PUBLIC_ENV=== "prod";
-}
+// Factory function to get the appropriate handler based on the environment
+export const getDataHandler = (): DataHandler => {
+  const env = process.env.NEXT_PUBLIC_ENV || "default";
+  return handlers[env] || handlers.default;
+};
