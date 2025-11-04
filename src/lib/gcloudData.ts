@@ -1,7 +1,7 @@
 "use server"
 
-import { Datastore } from '@google-cloud/datastore'
-import { MapData } from './data';
+import { Datastore } from '@google-cloud/datastore';
+import { MapData } from "../type/map";
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS!);
 
@@ -31,12 +31,12 @@ export const getDataFromGcloud = (): Promise<MapData> => {
 
 };
 
-export const putDataFromGcloud = ( data:MapData) => {
-       
-      const task = {
-        key: taskKey,
-        data: data
-      }
-    datastore.save(task); 
+export const putDataFromGcloud = (data: MapData) => {
+
+  const task = {
+    key: taskKey,
+    data: data
+  }
+  datastore.save(task);
 }
 
