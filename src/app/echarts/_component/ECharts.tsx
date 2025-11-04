@@ -13,8 +13,35 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
   const [isMapReady, setIsMapReady] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [prefecture, setPrefecture] = useState<string>("");
+  const [layoutCenter, setLayoutCenter] = useState(['50%', '50%']); // 初期値は中央寄せ
 
   useEffect(() => {
+    const updateLayout = () => {
+      const width = window.innerWidth;
+
+      if (width <= 480) {
+        // スマートフォン（小画面）
+        setLayoutCenter(['50%', '25%']);
+      } else if (width <= 600) {
+        setLayoutCenter(['50%', '35%']);
+      } else if (width <= 768) {
+        // タブレット（中画面）
+        setLayoutCenter(['50%', '45%']);
+      } else if (width <= 1024) {
+        // 小型PC
+        setLayoutCenter(['50%', '50%']);
+      } else {
+        // デスクトップ（大画面）
+        setLayoutCenter(['50%', '50%']);
+      }
+    };
+
+    updateLayout(); // 初回実行
+    window.addEventListener('resize', updateLayout); // リサイズ時に更新
+
+    // return () => {
+    //   window.removeEventListener('resize', updateLayout); // クリーンアップ
+    // };
     initMap();
   }, []);
 
@@ -78,6 +105,8 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
         name: 'Japan Data',
         type: 'map',
         map: 'JP',
+        layoutCenter: layoutCenter, // 状態に基づいて動的に設定
+        layoutSize: "100%", // 状態に基づいて動的に設定
         label: {
           show: false,
         },
@@ -100,7 +129,7 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
         )}
       </div>
     )
-  )
+  );
 };
 
 export default ECharts;
