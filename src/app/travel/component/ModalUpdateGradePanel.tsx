@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import useUpdateChartData from "../../hooks/useUpdateChartData";
-import Modal from "../component/modal";
-import commonStyles from "../component/modal.module.scss";
+import useUpdateChartData from "../../../hooks/useUpdateChartData";
+import Modal from "../../component/modal";
+import commonStyles from "../../component/modal.module.scss";
 import styles from './ModalUpdateGradePanel.module.scss';
 
 const grades = [1, 2, 3, 4, 5];
