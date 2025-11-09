@@ -3,45 +3,38 @@ import { EChartsData } from '@/type/map';
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { FC, useEffect, useState } from 'react';
-import { ModalUpdateGradePanel } from '../../travel/ModalUpdateGradePanel';
+import { ModalUpdateGradePanel } from './component/ModalUpdateGradePanel';
 
 type EChartsProps = {
   data: EChartsData;
-}
+};
 
 const ECharts: FC<EChartsProps> = ({ data }) => {
   const [isMapReady, setIsMapReady] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [prefecture, setPrefecture] = useState<string>("");
-  const [layoutCenter, setLayoutCenter] = useState(['50%', '50%']); // 初期値は中央寄せ
+  const [layoutCenter, setLayoutCenter] = useState(['50%', '50%']);
 
   useEffect(() => {
     const updateLayout = () => {
       const width = window.innerWidth;
 
       if (width <= 480) {
-        // スマートフォン（小画面）
         setLayoutCenter(['50%', '25%']);
       } else if (width <= 600) {
         setLayoutCenter(['50%', '35%']);
       } else if (width <= 768) {
-        // タブレット（中画面）
         setLayoutCenter(['50%', '45%']);
       } else if (width <= 1024) {
-        // 小型PC
         setLayoutCenter(['50%', '50%']);
       } else {
-        // デスクトップ（大画面）
         setLayoutCenter(['50%', '50%']);
       }
     };
 
-    updateLayout(); // 初回実行
-    window.addEventListener('resize', updateLayout); // リサイズ時に更新
+    updateLayout();
+    window.addEventListener('resize', updateLayout);
 
-    // return () => {
-    //   window.removeEventListener('resize', updateLayout); // クリーンアップ
-    // };
     initMap();
   }, []);
 
@@ -63,13 +56,12 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
     }
   };
 
-  // クリックイベントハンドラを登録するための onEvents
   const onEvents: { [key: string]: (params: any) => void } = {
     click: (params: any) => {
       setPrefecture(params.name);
       setIsModalOpen(true);
     }
-  }
+  };
 
   const updateCallback = () => {
     setIsModalOpen(false);
@@ -99,14 +91,16 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
       inRange: {
         color: ['#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027'],
       },
+      left: 'left',
+      top: '50px'
     },
     series: [
       {
         name: 'Japan Data',
         type: 'map',
         map: 'JP',
-        layoutCenter: layoutCenter, // 状態に基づいて動的に設定
-        layoutSize: "100%", // 状態に基づいて動的に設定
+        layoutCenter: layoutCenter,
+        layoutSize: "100%",
         label: {
           show: false,
         },
