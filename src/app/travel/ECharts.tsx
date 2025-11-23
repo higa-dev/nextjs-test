@@ -15,6 +15,24 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
   const [prefecture, setPrefecture] = useState<string>("");
   const [layoutCenter, setLayoutCenter] = useState(['50%', '50%']);
 
+  const initMap = async () => {
+    try {
+      const response = await fetch('/api/japan');
+      if (!response.ok) {
+        throw new Error('Failed to fetch GeoJSON');
+      }
+      const geoJson = await response.json();
+
+      if (!echarts.getMap('JP')) {
+        echarts.registerMap('JP', geoJson);
+      }
+
+      setIsMapReady(true);
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  };
+
   useEffect(() => {
     const updateLayout = () => {
       const width = window.innerWidth;
@@ -36,25 +54,11 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
     window.addEventListener('resize', updateLayout);
 
     initMap();
+
+    return () => {
+      window.removeEventListener('resize', updateLayout);
+    };
   }, []);
-
-  const initMap = async () => {
-    try {
-      const response = await fetch('/japan.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch GeoJSON');
-      }
-      const geoJson = await response.json();
-
-      if (!echarts.getMap('JP')) {
-        echarts.registerMap('JP', geoJson);
-      }
-
-      setIsMapReady(true);
-    } catch (error) {
-      console.error('Error initializing map:', error);
-    }
-  };
 
   const onEvents: { [key: string]: (params: any) => void } = {
     click: (params: any) => {
