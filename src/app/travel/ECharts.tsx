@@ -1,8 +1,9 @@
 "use client";
+import { useJapanGeoJson } from '@/hooks/api/useJapanGeoJson';
 import { EChartsData } from '@/type/map';
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { ModalUpdateGradePanel } from './component/ModalUpdateGradePanel';
 
 type EChartsProps = {
@@ -14,6 +15,22 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [prefecture, setPrefecture] = useState<string>("");
   const [layoutCenter, setLayoutCenter] = useState(['50%', '50%']);
+
+  const { geoJson, error, isLoading } = useJapanGeoJson();
+
+  const initMap = useCallback(() => {
+    if (!geoJson) return;
+
+    try {
+      if (!echarts.getMap('JP')) {
+        echarts.registerMap('JP', geoJson);
+      }
+
+      setIsMapReady(true);
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  }, [geoJson]);
 
   useEffect(() => {
     const updateLayout = () => {
@@ -35,26 +52,16 @@ const ECharts: FC<EChartsProps> = ({ data }) => {
     updateLayout();
     window.addEventListener('resize', updateLayout);
 
-    initMap();
+    return () => {
+      window.removeEventListener('resize', updateLayout);
+    };
   }, []);
 
-  const initMap = async () => {
-    try {
-      const response = await fetch('/japan.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch GeoJSON');
-      }
-      const geoJson = await response.json();
-
-      if (!echarts.getMap('JP')) {
-        echarts.registerMap('JP', geoJson);
-      }
-
-      setIsMapReady(true);
-    } catch (error) {
-      console.error('Error initializing map:', error);
+  useEffect(() => {
+    if (!error && !isLoading) {
+      initMap();
     }
-  };
+  }, [geoJson, error, isLoading, initMap]);
 
   const onEvents: { [key: string]: (params: any) => void } = {
     click: (params: any) => {

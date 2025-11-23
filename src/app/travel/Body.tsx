@@ -5,6 +5,7 @@ import ECharts from './ECharts';
 
 const Body: FC = () => {
   const { data: chartData, getChartData } = useGetChartData();
+
   useEffect(() => {
     getChartData();
   }, [getChartData]);

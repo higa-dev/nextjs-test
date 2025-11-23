@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { getDataHandler } from "../lib/dataSelector";
 import { EChartsData, MapData } from "../type/map";
 
@@ -24,11 +24,12 @@ const useGetChartData = () => {
     return ret;
   };
 
-  const getChartData = async () => {
+  // ✅ useCallback でメモ化して参照の安定性を保つ
+  const getChartData = useCallback(async () => {
     const mapData = await getMapData();
     const chartData = convertMapDataToChartData(mapData);
     setData(chartData);
-  };
+  }, []);
 
   return { getChartData, data };
 };
