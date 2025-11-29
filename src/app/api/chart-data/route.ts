@@ -12,7 +12,9 @@ export async function GET() {
 
     const headers = {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=300, s-maxage=300', // 5分キャッシュ
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
       'Access-Control-Allow-Origin': '*',
     };
 
