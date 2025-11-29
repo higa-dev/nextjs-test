@@ -1,22 +1,29 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { getDataHandler } from "../lib/dataSelector";
+import useSWR from "swr";
 import { EChartsData, MapData } from "../type/map";
 
-const handler = getDataHandler();
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 const useGetChartData = () => {
-  const [data, setData] = useState<EChartsData>([]);
+  // 環境変数から API ベースパスを取得
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
+  const apiUrl = `${apiBaseUrl}/chart-data`;
 
-  const getMapData = async (): Promise<MapData> => {
-    const mapData = await handler.getData();
-    return mapData;
-  };
+  const { data: mapData, error, isLoading, mutate } = useSWR<MapData>(
+    apiUrl,
+    fetcher,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 10000, // 10秒以内の重複リクエストを抑制
+    }
+  );
 
-  const convertMapDataToChartData = (data: MapData): EChartsData => {
+  const convertMapDataToChartData = (data: MapData | undefined): EChartsData => {
+    if (!data) return [];
+
     const ret: EChartsData = [];
-
     for (const prefecture in data) {
       ret.push({ name: prefecture, value: data[prefecture]['grade'], memo: data[prefecture]['memo'] });
     }
@@ -24,14 +31,9 @@ const useGetChartData = () => {
     return ret;
   };
 
-  // ✅ useCallback でメモ化して参照の安定性を保つ
-  const getChartData = useCallback(async () => {
-    const mapData = await getMapData();
-    const chartData = convertMapDataToChartData(mapData);
-    setData(chartData);
-  }, []);
+  const data = convertMapDataToChartData(mapData);
 
-  return { getChartData, data };
+  return { data, error, isLoading, mutate };
 };
 
 export default useGetChartData;
