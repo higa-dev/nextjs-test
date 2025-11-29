@@ -1,17 +1,21 @@
 "use client";
-import useGetChartData from '@/hooks/useGetChartData';
-import { FC, useEffect } from 'react';
+import useGetChartData from '@/hooks/api/chart-data/useGetChartData';
+import { FC } from 'react';
 import ECharts from './ECharts';
 
 const Body: FC = () => {
-  const { data: chartData, getChartData } = useGetChartData();
+  const { data: chartData, isLoading, error, mutate } = useGetChartData();
 
-  useEffect(() => {
-    getChartData();
-  }, [getChartData]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
-    <ECharts data={chartData}></ECharts>
+    <ECharts data={chartData} mutate={mutate}></ECharts>
   );
 };
 

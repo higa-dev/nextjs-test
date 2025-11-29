@@ -1,13 +1,18 @@
-import { use } from "react";
-import { WeatherData, forecast } from "../../type/weather";
+"use client";
+
 import Image from "next/image";
-import { fetchApi } from "../../lib/util";
+import { useWeather } from "../../hooks/api/weather/useWeather";
+import { forecast } from "../../type/weather";
 
 const week = ["日", "月", "火", "水", "木", "金", "土"];
-const url = 'https://weather.tsukumijima.net/api/forecast/city/130010';
 
 export const Weather = () => {
-  const weatherData: WeatherData = use(fetchApi(url));
+  const { weatherData, isLoading, error } = useWeather();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading weather data</div>;
+  if (!weatherData) return <div>No data</div>;
+
   const weatherOutputData: WeatherOutput[] = weatherData.forecasts.map((forecast) => { return convert(forecast) });
   return (
     <>
