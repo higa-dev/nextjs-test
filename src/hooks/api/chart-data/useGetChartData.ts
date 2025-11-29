@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { EChartsData, MapData } from "../type/map";
+import { EChartsData, MapData } from "../../../type/map";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 

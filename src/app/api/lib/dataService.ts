@@ -53,22 +53,9 @@ export const getDataFromGcloud = async (): Promise<MapData> => {
 };
 
 /**
- * Update data in cloud or mock
- */
-export const updateChartData = async (data: MapData): Promise<void> => {
-  const env = process.env.NEXT_PUBLIC_ENV || 'default';
-
-  if (env === 'prod') {
-    await updateDataInGcloud(data);
-  } else {
-    updateMockData(data);
-  }
-};
-
-/**
  * Update data in Google Cloud Datastore
  */
-const updateDataInGcloud = async (data: MapData): Promise<void> => {
+export const putDataFromGcloud = async (data: MapData): Promise<void> => {
   try {
     initializeDatastore();
 
@@ -81,11 +68,4 @@ const updateDataInGcloud = async (data: MapData): Promise<void> => {
     console.error('Error updating Datastore:', error);
     throw error;
   }
-};
-
-/**
- * Update mock data
- */
-const updateMockData = (data: MapData): void => {
-  console.log("Mock data update (no-op)");
 };

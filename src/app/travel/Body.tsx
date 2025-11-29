@@ -1,5 +1,5 @@
 "use client";
-import useGetChartData from '@/hooks/useGetChartData';
+import useGetChartData from '@/hooks/api/chart-data/useGetChartData';
 import { FC } from 'react';
 import ECharts from './ECharts';
 

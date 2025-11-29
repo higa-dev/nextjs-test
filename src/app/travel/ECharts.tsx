@@ -1,5 +1,5 @@
 "use client";
-import { useJapanGeoJson } from '@/hooks/api/useJapanGeoJson';
+import { useJapanGeoJson } from '@/hooks/api/japan/useJapanGeoJson';
 import { EChartsData, MapData } from '@/type/map';
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';

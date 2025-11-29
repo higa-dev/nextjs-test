@@ -93,6 +93,21 @@ export async function GET() {
   }
 }
 
+/**
+ * Mock チャートデータ更新エンドポイント
+ * 開発環境でのみ利用（実際には何もしない）
+ */
+export async function PUT() {
+  console.log("api/mock/chart-data PUT called");
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  };
+
+  return NextResponse.json(mockData, { headers });
+}
+
 // OPTIONSリクエスト対応（CORS preflight）
 export async function OPTIONS() {
   return NextResponse.json(
@@ -100,7 +115,7 @@ export async function OPTIONS() {
     {
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
     }
