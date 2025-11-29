@@ -16,7 +16,7 @@ const useGetChartData = () => {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 10000, // 10秒以内の重複リクエストを抑制
+      dedupingInterval: 0, // 重複リクエスト抑制を無効化（mutateでの再取得を即座に反映）
     }
   );
 
