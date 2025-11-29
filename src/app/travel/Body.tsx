@@ -4,7 +4,7 @@ import { FC } from 'react';
 import ECharts from './ECharts';
 
 const Body: FC = () => {
-  const { data: chartData, isLoading, error, mutate } = useGetChartData();
+  const { data: chartData, isLoading, error } = useGetChartData();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -15,7 +15,7 @@ const Body: FC = () => {
   }
 
   return (
-    <ECharts data={chartData} mutate={mutate}></ECharts>
+    <ECharts data={chartData}></ECharts>
   );
 };
 

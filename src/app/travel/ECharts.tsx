@@ -1,18 +1,16 @@
 "use client";
 import { useJapanGeoJson } from '@/hooks/api/japan/useJapanGeoJson';
-import { EChartsData, MapData } from '@/type/map';
+import { EChartsData } from '@/type/map';
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { KeyedMutator } from 'swr';
 import { ModalUpdateGradePanel } from './component/ModalUpdateGradePanel';
 
 type EChartsProps = {
   data: EChartsData;
-  mutate: KeyedMutator<MapData>;
 };
 
-const ECharts: FC<EChartsProps> = ({ data, mutate }) => {
+const ECharts: FC<EChartsProps> = ({ data }) => {
   const [isMapReady, setIsMapReady] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [prefecture, setPrefecture] = useState<string>("");
@@ -74,8 +72,6 @@ const ECharts: FC<EChartsProps> = ({ data, mutate }) => {
 
   const updateCallback = () => {
     setIsModalOpen(false);
-    // データ更新後にSWRで再取得
-    mutate();
   };
 
   const cancelCallback = () => {

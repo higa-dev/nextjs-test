@@ -1,8 +1,12 @@
 "use client";
 
 import useSWRMutation from "swr/mutation";
+import useGetChartData from "./useGetChartData";
 
 const useUpdateChartData = () => {
+  // useGetChartDataからmuateを取得
+  const { mutate } = useGetChartData();
+
   // 環境変数から API ベースパスを取得
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
   const apiUrl = `${apiBaseUrl}/chart-data`;
@@ -27,7 +31,11 @@ const useUpdateChartData = () => {
   );
 
   return {
-    update: (prefecture: string, grade: number) => trigger({ prefecture, grade }),
+    update: async (prefecture: string, grade: number) => {
+      await trigger({ prefecture, grade });
+      // 更新後にキャッシュを再取得
+      mutate();
+    },
     isMutating,
     error,
   };
