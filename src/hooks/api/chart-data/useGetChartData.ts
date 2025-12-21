@@ -5,7 +5,7 @@ import { EChartsData, MapData } from "../../../type/map";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-const useGetChartData = () => {
+const useGetChartData = (fetchGradeZeroOnly: boolean = false) => {
   // 環境変数から API ベースパスを取得
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
   const apiUrl = `${apiBaseUrl}/chart-data`;
@@ -20,6 +20,17 @@ const useGetChartData = () => {
     }
   );
 
+  const filterDataByGradeZero = (data: MapData | undefined): MapData => {
+    if (!data) return {};
+    const filteredData: MapData = {};
+    for (const prefecture in data) {
+      if (data[prefecture] && data[prefecture]['grade'] === 0) {
+        filteredData[prefecture] = data[prefecture];
+      }
+    }
+    return filteredData;
+  };
+
   const convertMapDataToChartData = (data: MapData | undefined): EChartsData => {
     if (!data) return [];
 
@@ -31,7 +42,8 @@ const useGetChartData = () => {
     return ret;
   };
 
-  const data = convertMapDataToChartData(mapData);
+  const processedMapData = fetchGradeZeroOnly ? filterDataByGradeZero(mapData) : mapData;
+  const data = convertMapDataToChartData(processedMapData);
 
   return { data, error, isLoading, mutate };
 };

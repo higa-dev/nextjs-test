@@ -2,6 +2,7 @@
 import useGetChartData from '@/hooks/api/chart-data/useGetChartData';
 import { FC } from 'react';
 import ECharts from './ECharts';
+import Link from 'next/link';
 
 const Body: FC = () => {
   const { data: chartData, isLoading, error, mutate } = useGetChartData();
@@ -15,7 +16,10 @@ const Body: FC = () => {
   }
 
   return (
-    <ECharts data={chartData} mutate={mutate}></ECharts>
+    <div>
+      <ECharts data={chartData} mutate={mutate}></ECharts>
+      <Link href='/travel/not-visit'>未訪問の都道府県一覧</Link>
+    </div>
   );
 };
 
