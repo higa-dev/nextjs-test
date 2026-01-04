@@ -16,6 +16,7 @@ const ECharts: FC<EChartsProps> = ({ data, mutate }) => {
   const [isMapReady, setIsMapReady] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [prefecture, setPrefecture] = useState<string>("");
+  const [currentMemo, setCurrentMemo] = useState<string>("");
   const [layoutCenter, setLayoutCenter] = useState(['50%', '50%']);
 
   const { geoJson, error, isLoading } = useJapanGeoJson();
@@ -68,6 +69,8 @@ const ECharts: FC<EChartsProps> = ({ data, mutate }) => {
   const onEvents: { [key: string]: (params: any) => void } = {
     click: (params: any) => {
       setPrefecture(params.name);
+      const memoValue = params.data.memo || "";
+      setCurrentMemo(memoValue);
       setIsModalOpen(true);
     }
   };
@@ -89,7 +92,8 @@ const ECharts: FC<EChartsProps> = ({ data, mutate }) => {
       trigger: 'item',
       formatter: (params: any) => {
         const { name, value, memo } = params.data;
-        return `${name}<br/>評価: ${value}${memo ? `<br/>Memo: ${memo}` : ''}`;
+        const valueText = value === 0 ? '未訪問' : `評価: ${value}`;
+        return `${name}<br/>${valueText}${memo ? `<br/>Memo: ${memo}` : ''}`;
       }
     },
     visualMap: {
@@ -129,7 +133,7 @@ const ECharts: FC<EChartsProps> = ({ data, mutate }) => {
       <div style={{ width: '100%', height: '800px', minHeight: 320 }}>
         <ReactECharts option={options} onEvents={onEvents} style={{ width: '100%', height: '100%' }} />
         {isModalOpen && (
-          <ModalUpdateGradePanel prefecture={prefecture} updateCallback={updateCallback} cancelCallback={cancelCallback}></ModalUpdateGradePanel>
+          <ModalUpdateGradePanel prefecture={prefecture} initialMemo={currentMemo} updateCallback={updateCallback} cancelCallback={cancelCallback}></ModalUpdateGradePanel>
         )}
       </div>
     )
