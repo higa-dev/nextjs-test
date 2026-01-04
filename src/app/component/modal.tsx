@@ -9,7 +9,9 @@ type ModalProps = {
 const Modal: React.FC<ModalProps> = props => {
   return (
     <div className={styles.modal} onClick={props.close}>
-      {props.children}
+      <div onClick={e => e.stopPropagation()}>
+        {props.children}
+      </div>
     </div>
   );
 };

@@ -11,13 +11,13 @@ const useUpdateChartData = () => {
   console.log("apiUrl in useUpdateChartData:", apiUrl);
   const { trigger, isMutating, error } = useSWRMutation(
     apiUrl,
-    async (url, { arg: { prefecture, grade } }: { arg: { prefecture: string; grade: number } }) => {
+    async (url, { arg: { prefecture, grade, memo } }: { arg: { prefecture: string; grade: number; memo?: string } }) => {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prefecture, grade }),
+        body: JSON.stringify({ prefecture, grade, memo }),
       });
 
       if (!response.ok) {
@@ -29,8 +29,8 @@ const useUpdateChartData = () => {
   );
 
   return {
-    update: async (prefecture: string, grade: number) => {
-      await trigger({ prefecture, grade });
+    update: async (prefecture: string, grade: number, memo?: string) => {
+      await trigger({ prefecture, grade, memo });
       // 更新後に、キャッシュキーを指定して再取得
     },
     isMutating,

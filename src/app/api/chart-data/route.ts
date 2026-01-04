@@ -41,7 +41,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { prefecture, grade } = body;
+    const { prefecture, grade, memo } = body;
 
     if (!prefecture || grade === undefined) {
       return NextResponse.json(
@@ -57,6 +57,9 @@ export async function PUT(request: NextRequest) {
 
     const mapData: MapData = await getDataFromGcloud();
     mapData[prefecture]['grade'] = grade;
+    if (memo !== undefined) {
+      mapData[prefecture]['memo'] = memo;
+    }
     await putDataFromGcloud(mapData);
 
     const headers = {

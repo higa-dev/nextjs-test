@@ -13,7 +13,7 @@ const mockData: MapData = {
   "栃木県": { "grade": 0, "memo": "", "pickup": 0 },
   "秋田県": { "grade": 0, "memo": "", "pickup": 0 },
   "青森県": { "grade": 0, "memo": "", "pickup": 0 },
-  "北海道": { "grade": 5, "memo": "", "pickup": 0 },
+  "北海道": { "grade": 5, "memo": "毎年行きたい", "pickup": 0 },
   "東京都": { "grade": 5, "memo": "", "pickup": 0 },
   "群馬県": { "grade": 3, "memo": "", "pickup": 0 },
   "広島県": { "grade": 4, "memo": "", "pickup": 0 },
