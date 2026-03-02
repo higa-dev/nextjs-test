@@ -3,9 +3,8 @@
 import React, { useState } from "react";
 import useUpdateChartData from "../../../hooks/api/chart-data/useUpdateChartData";
 import Modal from "../../component/modal";
+import { GradeButtonGroup } from "./GradeButtonGroup";
 import styles from './ModalUpdateGradePanel.module.scss';
-
-const grades = [1, 2, 3, 4, 5];
 
 type Props = {
   prefecture: string;
@@ -27,18 +26,7 @@ export const ModalUpdateGradePanel: React.FC<Props> = (props) => {
   return (
     <Modal close={props.cancelCallback} title={`${props.prefecture}の評価`}>
       <div className={styles.panel}>
-        <div className="text-red">
-          {grades.map(grade => {
-            return (
-              <button
-                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ${styles.button}`}
-                onClick={() => update(grade)}
-                key={grade}
-              >
-                {grade}
-              </button>)
-          })}
-        </div>
+        <GradeButtonGroup onGradeSelect={update} />
         <div className="mt-4">
           <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">メモ（オプション）</label>
           <textarea
