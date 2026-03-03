@@ -4,7 +4,7 @@ import { MapData } from "@/type/map";
 import { Pool } from "pg";
 
 const pool = new Pool({
-  connectionString: process.env.VERCEL_POSTGRES_URL,
+  connectionString: process.env.POSTGRES_URL,
 });
 
 // 取得: 都道府県名をキーにした MapData を生成
