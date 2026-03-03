@@ -1,71 +1,71 @@
-"use server"
+"use server";
 
 import { MapData } from "@/type/map";
-import { Datastore } from '@google-cloud/datastore';
+import { Pool } from "pg";
 
-let datastore: Datastore | null = null;
-let taskKey: ReturnType<Datastore['key']> | null = null;
+const pool = new Pool({
+  connectionString: process.env.VERCEL_POSTGRES_URL,
+});
 
-const initializeDatastore = () => {
-  if (datastore) return;
+// 取得: 都道府県名をキーにした MapData を生成
+export const getDataFromPostgres = async (): Promise<MapData> => {
+  const res = await pool.query(`
+    SELECT pm.name AS prefecture,
+           cd.grade,
+           cd.memo,
+           cd.pickup
+    FROM chart_data cd
+    JOIN prefecture_master pm
+      ON pm.id = cd.prefecture_id
+  `);
 
-  try {
-    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS!);
-    datastore = new Datastore({
-      projectId: process.env.GOOGLE_PROJECT_ID,
-      credentials,
-    });
-
-    const kind = 'nextjs-test';
-    const name = 'travel';
-    taskKey = datastore.key([kind, name]);
-  } catch (error) {
-    console.error('Failed to initialize Datastore:', error);
-    throw error;
-  }
-};
-
-/**
- * Get data from Google Cloud Datastore
- */
-export const getDataFromGcloud = async (): Promise<MapData> => {
-  try {
-    initializeDatastore();
-
-    const getResponse = await (datastore!.get(taskKey!));
-    const _data = getResponse[0];
-
-    if (!_data) {
-      console.warn('No data found in Datastore');
-      return {};
-    }
-
-    const data: MapData = {};
-    for (const key in _data) {
-      data[key] = _data[key];
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Error fetching from Datastore:', error);
-    throw error;
-  }
-};
-
-/**
- * Update data in Google Cloud Datastore
- */
-export const putDataFromGcloud = async (data: MapData): Promise<void> => {
-  try {
-    initializeDatastore();
-
-    const task = {
-      key: taskKey,
-      data: data
+  const result: MapData = {};
+  res.rows.forEach(({ prefecture, grade, memo, pickup }) => {
+    result[prefecture] = {
+      grade,
+      memo,
+      pickup: pickup ? 1 : 0,
     };
-    await datastore!.save(task);
-  } catch (error) {
-    console.error('Error updating Datastore:', error);
-    throw error;
+  });
+  return result;
+};
+
+// 更新: MapData を受け取り、チャートデータを upsert
+export const putDataToPostgres = async (data: MapData): Promise<void> => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    for (const [pref, value] of Object.entries(data)) {
+      // prefecture_master から ID を取得
+      const prefRes = await client.query(
+        `SELECT id FROM prefecture_master WHERE name = $1`,
+        [pref]
+      );
+      if (prefRes.rowCount === 0) {
+        console.warn(`Prefecture not found in master: ${pref}`);
+        continue;
+      }
+      const prefId = prefRes.rows[0].id;
+
+      await client.query(
+        `INSERT INTO chart_data
+           (prefecture_id, grade, memo, pickup, updated_at)
+         VALUES ($1, $2, $3, $4, NOW())
+         ON CONFLICT (prefecture_id) DO UPDATE SET
+           grade = EXCLUDED.grade,
+           memo = EXCLUDED.memo,
+           pickup = EXCLUDED.pickup,
+           updated_at = NOW()`,
+        [prefId, value.grade, value.memo, value.pickup === 1]
+      );
+    }
+
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
   }
 };
