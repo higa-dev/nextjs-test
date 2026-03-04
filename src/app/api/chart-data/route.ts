@@ -1,14 +1,14 @@
 import { MapData } from '@/type/map';
 import { NextRequest, NextResponse } from 'next/server';
-import { getDataFromGcloud, putDataFromGcloud } from '../lib/dataService';
+import { getDataFromPostgres, putDataToPostgres } from '../lib/dataService';
 
 /**
  * Production チャートデータ取得エンドポイント
- * Google Cloud Datastore からデータを取得します
+ * Vercel Postgres からデータを取得します
  */
 export async function GET() {
   try {
-    const data = await getDataFromGcloud();
+    const data = await getDataFromPostgres();
 
     const headers = {
       'Content-Type': 'application/json',
@@ -55,12 +55,12 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const mapData: MapData = await getDataFromGcloud();
+    const mapData: MapData = await getDataFromPostgres();
     mapData[prefecture]['grade'] = grade;
     if (memo !== undefined) {
       mapData[prefecture]['memo'] = memo;
     }
-    await putDataFromGcloud(mapData);
+    await putDataToPostgres(mapData);
 
     const headers = {
       'Content-Type': 'application/json',
